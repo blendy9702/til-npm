@@ -10,7 +10,9 @@ function CartSummary() {
   return (
     <div>
       <p>총 삼품 수 : {count}</p>
-      <p>총 금액 : {total} dollar?!</p>
+      <p>
+        총 금액 : {total} <b>dollar?!</b>
+      </p>
     </div>
   );
 }

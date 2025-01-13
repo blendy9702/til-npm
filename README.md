@@ -1,395 +1,398 @@
-# Recoil
+# tailwindcss
 
-- 장점 : context state 관리가 참 쉽다.
-- 단점 : 업데이트가 없다. (개발자 퇴사)
-- https://recoiljs.org/ko/
-- `npm i recoil`
+- [링크](https://tailwindcss.com/)
 
-# 코딩 컨벤션
+## 셋팅
 
-- `/src/atoms 폴더` 생성
-  : `/src/state 폴더` 생성을 하는 경우도 있다.
-- `/src/selectors 폴더` 생성
-  : 만들지 않기도 함.
+- npm
+  : `npm install -D tailwindcss postcss autoprefixer`
+  : `npx tailwindcss init`
+  : tailwind.config.js
 
-## 기초 코드
+  ```js
+  /** @type {import('tailwindcss').Config} */
+  export default {
+    content: [
+      "./index.html",
+      "./src/**/*.{js,ts,jsx,tsx}", // Vite 프로젝트에 맞는 파일 확장자 추가
+    ],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
+  };
+  ```
 
-### 1. atoms 폴더에 atom 파일 만들기
+  :index.css
 
-- atom 은 각각의 state 를 정의하는 것.
-- `/src/atoms/counterAtom.js 파일` 생성
+  ```css
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  ```
 
-```js
-import { atom } from "recoil";
+  :vite.config.js
 
-export const counterAtom = atom({
-  key: "counterAtom", // state 를 구분하는 키
-  default: 0, // 초기값
-});
+  ```js
+  import { defineConfig } from "vite";
+  import react from "@vitejs/plugin-react";
+  import tailwindcss from "tailwindcss";
 
-export const loginAtion = atom({
-  key: "loginAtom",
-  default: false,
-});
-```
+  // https://vite.dev/config/
+  export default defineConfig({
+    plugins: [react()],
+    css: {
+      postcss: {
+        plugins: [tailwindcss()],
+      },
+    },
+  });
+  ```
 
--main.jsx 에 RecoilRoot 설정
+- Extension
+  : Tailwind CSS IntelliSense 설치
+
+## 참고사항
+
+: 리액트 프로젝트 생성하는 법 2가지
+
+- CRA (요즘은 사용추천 안함.)
+  : proxy 설정이 다르다.
+  : tailwind 셋팅도 다르다.
+
+- Vite
+  : proxy 설정이 다르다.
+  : tailwind 셋팅도 다르다.
+
+## 셋팅 확인
 
 ```jsx
-import { createRoot } from "react-dom/client";
-import { RecoilRoot } from "recoil";
-import App from "./App.jsx";
-import "./index.css";
-
-createRoot(document.getElementById("root")).render(
-  // 전연 store 를 활용함.
-  <RecoilRoot>
-    <App />
-  </RecoilRoot>,
-);
-```
-
-- `/components/CounterAtom.jsx 활용`
-
-```jsx
-import { useRecoilState } from "recoil";
-import { counterAtom, loginAtion } from "../atoms/counterAtom";
-
-const CounterAtom = () => {
-  const [count, setCount] = useRecoilState(counterAtom);
-  const [isLogin, setIsLogin] = useRecoilState(loginAtion);
+function App() {
   return (
-    <div>
-      <h1>로그인 상태 : {isLogin ? "로그인 :)" : "로그아웃 :("}</h1>
-      <button onClick={() => setIsLogin(true)}>로그인</button>
-      <button onClick={() => setIsLogin(false)}>로그아웃</button>
-      <h1>CounterAtom : {count}</h1>
-      <button onClick={() => setCount(count + 1)}>증가</button>
-      <button onClick={() => setCount(count - 1)}>감소</button>
-      <button onClick={() => setCount(0)}>리셋</button>
-    </div>
-  );
-};
-export default CounterAtom;
-```
-
-## 응용예제(Todo)
-
-- `/src/atoms/TodoListAtoms.js` 생성
-
-```js
-import { atom } from "recoil";
-
-export const todoListAtom = atom({
-  key: "todoListAtom", // atiom 구분 문자열 즉, 키값
-  default: [], // 기본 할일 배열의 목록
-});
-```
-
-- `/src/components/TodoListAtom.jsx` 활용예
-
-```jsx
-import { useRecoilState } from "recoil";
-import { todoListAtom } from "../atoms/TodoListAtom";
-import { useState } from "react";
-
-function TodoListAtom() {
-  const [todos, setTodos] = useRecoilState(todoListAtom);
-  const [inputValue, setInputValue] = useState("");
-  //   할일 추가
-  const addTodo = () => {
-    if (inputValue.trim()) {
-      setTodos([
-        ...todos,
-        { id: Date.now(), title: inputValue, completed: false },
-      ]);
-    }
-    setInputValue("");
-  };
-  // 할일 삭제
-  const deleteTodo = id => {
-    setTodos(todos.filter(item => item.id !== id));
-  };
-  const toggleTodo = id => {
-    setTodos(
-      todos.map(item =>
-        item.id === id ? { ...item, completed: !item.completed } : item,
-      ),
-    );
-  };
-  return (
-    <div>
-      <h1>TodoListAtom</h1>
-      <div>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-        />
-        <button onClick={() => addTodo()}>추가</button>
-        <ul>
-          {/* 목록출력 */}
-          {todos.map(item => (
-            <li key={item.id}>
-              <p
-                onClick={() => toggleTodo(item.id)}
-                style={{
-                  textDecoration: item.completed ? "line-through" : "none",
-                }}
-              >
-                {item.title}
-              </p>
-              <button onClick={() => deleteTodo(item.id)}>삭제</button>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="bg-gray-400 min-h-screen flex items-center justify-center">
+      <div className="text-4xl font-bold text-blue-500">Hello Tailwind :D</div>
     </div>
   );
 }
-export default TodoListAtom;
+export default App;
 ```
 
-### Selector 를 이용한 데이터 변경 및 필터링 작업
+### 1. 레이아웃
 
-- `/src/selectors/todoSelectors.js 파일` 생성
-
-```js
-// Recoil 에서 관리하는 데이터에서
-// 완료된 항목만 필터링 해서 출력해 보기
-
-import { selector } from "recoil";
-import { todoListAtom } from "../atoms/TodoListAtom";
-
-export const completedTodosSelector = selector({
-  key: "completedTodosSelector",
-  get: ({ get }) => {
-    const todos = get(todoListAtom);
-    return todos.filter(item => item.completed);
-  },
-});
-```
-
-- `/src/components/TodoListSelector.jsx` 활용
+- FlexBox
 
 ```jsx
-import { useRecoilValue } from "recoil";
-import { completedTodosSelector } from "../selectors/todoSelectors";
-
-function TodoListSelector() {
-  // 나는 todos atoms에서 completed:true 만 가져오겠다!
-  const completedTodos = useRecoilValue(completedTodosSelector);
+function App() {
   return (
-    <div>
-      <h1>완료된 할일목록</h1>
-      <ul>
-        {completedTodos.map(item => (
-          <li key={item.id}>{item.title}</li>
-        ))}
-      </ul>
+    <div className="flex">
+      <div className="flex-1 bg-blue-500">Item 1</div>
+      <div className="flex-1 bg-green-500">Item 2</div>
     </div>
   );
 }
-export default TodoListSelector;
+export default App;
 ```
 
-## 응용예제(쇼핑몰 장바구니)
+: justify-start, justify-center, justify-end, justify-between, justify-around, justify-evenly
+: items-start, items-center, items-end
 
-### atoms
+- Grid
 
-- `/src/atoms/cartAtoms.js`
+```jsx
+function App() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <div className="bg-red-500">1</div>
+      <div className="bg-blue-500">2</div>
+      <div className="bg-green-500">3</div>
+      <div className="bg-red-500">1</div>
+      <div className="bg-blue-500">2</div>
+      <div className="bg-green-500">3</div>
+    </div>
+  );
+}
+export default App;
+```
+
+: grid-cols-2, grid-cols-4
+: gap-2, gap-4
+
+- padding, margin
+
+```jsx
+function App() {
+  return <div className="p-4 m-4 bg-yellow-300">hello</div>;
+}
+export default App;
+```
+
+### 3. Typography
+
+- 글자 크기
+  : text-xs, text-sm, text-base, text-lg, text-xl, text-2xl, text-4xl
+- 글자 색상
+  : text-red-500, text-blue-600, text-gray-700
+
+- 폰트 스타일
+  : font-thin, font-normal, font-bold, font-extrabold
+
+### 4. 배경
+
+- 배경 색상
+  : bg-red-500, bg-green-600, bg-gray-700
+- 배경 이미지
+  : bg-cover, bg-contain, bg-center
+
+```jsx
+<div class="bg-cover bg-center h-40" style="background-image: url('image.jpg')">
+  Background Image Example
+</div>
+```
+
+```jsx
+<div
+  className="bg-cover bg-center h-40"
+  style={{ backgroundImage: "url('image.jpg')" }}
+>
+  Background Image Example
+</div>
+```
+
+### 5. Borders
+
+- 테두리
+  : border, border-2, border-4
+- 테두리 색상
+  : border-red-500, border-gray-300
+- 둥근 테두리
+  : rounded, rounded-full, rounded-lg
+
+### 6. shadow
+
+: shadow-sm, shadow, shadow-lg, shadow-xl
+
+### 7. 반응형
+
+- sm: 640px 이상
+- md: 768px 이상
+- lg: 1024px 이상
+- xl: 1280px 이상
+- 2xl: 1536px 이상
+
+```jsx
+<div className="bg-gray-100 p-4 sm:bg-blue-500 md:bg-green-500 lg:bg-red-500">
+  Responsive Background Color
+</div>
+```
+
+### 8. 애니메이션
+
+- 트랜지션
+  : transition, duration-300, ease-in-out
+
+  ```jsx
+  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+    Hover Me
+  </button>
+  ```
+
+- 애니메이션
+  : animate-spin, animate
+
+  ```jsx
+  <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+  ```
+
+## 커스터마이징
+
+- tailwind.config.js
 
 ```js
-import { atom } from "recoil";
-
-export const cartAtom = atom({
-  key: "cartState",
-  default: [
-    {
-      id: 1,
-      name: "커피",
-      price: "100",
-    },
-    {
-      id: 2,
-      name: "딸기",
-      price: "50",
-    },
-    {
-      id: 3,
-      name: "참외",
-      price: "200",
-    },
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Vite 프로젝트에 맞는 파일 확장자 추가
   ],
-});
-```
-
-- `/src/atoms/productAtoms.js`
-
-```js
-import { atom } from "recoil";
-
-export const productAtom = atom({
-  key: "productState",
-});
-```
-
-### selectors
-
-- `/src/selectors/cartSelector.js`
-
-```js
-// 총금액 및 제품총수 구하기
-
-import { selector } from "recoil";
-import { productAtom } from "../atoms/productAtoms";
-import { cartAtom } from "../atoms/cartAtoms";
-
-export const cartTotalSelector = selector({
-  key: "cartTotal",
-  get: ({ get }) => {
-    // 장바구니
-    const cart = get(cartAtom);
-    // 제품들
-    const products = get(productAtom);
-    return cart.reduce((total, item) => {
-      const product = product.find(pro => item.id === pro.id);
-      // 전체 합산이 필요
-      // 현재까지 금액 + (제품가격 * 장바구니 담긴 개수)
-      return total + product.price * item.qty;
-    }, 0);
+  theme: {
+    extend: {
+      // 우리만의 서비스에 사용할 색상 추가
+      color: {
+        primary: "#1E40AF",
+        secondary: "#64748B",
+      },
+    },
   },
-});
-
-// 장바구니 제품총수 구하기
-export const cartItemCounterSelector = selector({
-  key: "cartItemCounter",
-  get: ({ get }) => {
-    const cart = get(cartAtom);
-    return cart.reduce((total, item) => total + item.qty, 0);
-  },
-});
+  plugins: [],
+};
 ```
-
-: `/src/components/product 폴더` 활용하기
-
-- ProductList.jsx
 
 ```jsx
-import { useRecoilValue } from "recoil";
-import { productAtom } from "../../atoms/productAtoms";
-import ProductItem from "./ProductItem";
-
-function ProductList() {
-  const products = useRecoilValue(productAtom);
-  return (
-    <div>
-      <h1>제품리스트</h1>
-      <div>
-        {products.map(item => (
-          <ProductItem key={item.id} product={item} />
-        ))}
-      </div>
-    </div>
-  );
+function App() {
+  return <div className="bg-primary text-secondary">색상</div>;
 }
-export default ProductList;
+export default App;
 ```
 
-- ProductItem.jsx
+## 컴포넌트 스타일링
+
+- /src/component/ui 폴더
+  : button.jsx
 
 ```jsx
 /* eslint-disable react/prop-types */
-
-import { useRecoilState } from "recoil";
-import { cartAtom } from "../../atoms/cartAtoms";
-
-function ProductItem({ product }) {
-  const [cart, setCart] = useRecoilState(cartAtom);
-  // 장바구니 담기
-  const addCart = id => {
-    // id를 전달받으면 cart 에 제품 id 와 qty: 개수 업데이트
-    setCart(currentCart => {
-      // 현재 카트에 이미 동일한 id 제품이 있는지 검사
-      const existId = currentCart.find(item => item.id === id);
-      // 만약 장바구니에 제품이 담겼다면 갯수 증가
-      if (existId) {
-        // 갯수 증가
-        return currentCart.map(item =>
-          item.id === id ? { ...item, qty: item.qty + 1 } : item,
-        );
-      }
-      // 새로운 ID 추가 및 갯수 1로 셋팅
-      return [...currentCart, { id: id, qty: 1 }];
-    });
+export default function Button({ label, onClick }) {
+  const baseStyle = "px-4 py-2 font-bold rounded";
+  const variants = {
+    primary: "bg-blue-500 text-white hover:bg-blue-700",
+    secondary: "bg-grey-500 text-white hover:bg-grey-700",
+    danger: "bg-red-500 text-white hover:bg-red-700",
   };
   return (
-    <div style={{ display: "flex", border: "2px solid #000" }}>
-      <h3>{product.name}</h3>
-      <p>{product.price}원</p>
-      <button onClick={() => addCart(product.id)}>장바구니 담기</button>
-    </div>
+    <button className={`${baseStyle} ${variants["primary"]}`} onClick={onClick}>
+      {label}
+    </button>
   );
 }
-export default ProductItem;
 ```
 
-: `/src/components/cart 폴더` 활용하기
-
-- CartList.jsx
-
 ```jsx
-import { useRecoilValue } from "recoil";
-import { cartAtom } from "../../atoms/cartAtoms";
-import CartItem from "./CartItem";
+import Button from "./components/ui/button";
 
-function CartList() {
-  const cart = useRecoilValue(cartAtom);
+function App() {
   return (
-    <div>
-      <h1>장바구니</h1>
-      <div>
-        {cart.map(item => (
-          <CartItem key={item.id} item={item} />
-        ))}
-      </div>
-    </div>
+    <>
+      <Button
+        label="Submit"
+        variant="primary"
+        onClick={() => console.log("gogo")}
+      />
+
+      <Button label="Submit" variant="secondary" />
+      <Button label="Submit" variant="danger" />
+    </>
   );
 }
-export default CartList;
+export default App;
 ```
 
-- CartItem.jsx
+## CSS 클래스 그룹화 컴포넌트 스타일링
+
+- 너무 긴 클래스명들을 줄여서 사용.
+- `npm install clsx`
+- `/src/ui 폴더` 생성
+- Alert.jsx
 
 ```jsx
-import { useRecoilState, useRecoilValue } from "recoil";
-import { cartAtom } from "../../atoms/cartAtoms";
-import { productAtom } from "../../atoms/productAtoms";
+import clsx from "clsx";
 
 /* eslint-disable react/prop-types */
-function CartItem({ item }) {
-  const [cart, setCart] = useRecoilState(cartAtom);
-  const products = useRecoilValue(productAtom);
-  const product = products.find(prd => prd.id === item.id);
-  const removeCart = id => {
-    setCart(currentCart => currentCart.filter(prd => prd.id !== id));
-  };
+export function Alert({ message, type }) {
   return (
-    <div>
-      <h3>제품이름 : {product.name}</h3>
-      <p>수량 : {item.qty}</p>
-      <p>가격 : {(product.price * item.qty).toLocaleString()} dollar?!</p>
-      <button
-        onClick={() => {
-          removeCart(item.id);
-        }}
-      >
-        삭제
-      </button>
+    <div
+      className={clsx(
+        "p-4 rounded",
+        type === "success" && "bg-green-100 text-green-500",
+        type === "error" && "bg-red-100 text-red-500",
+        type === "warning" && "bg-yellow-100 text-yellow-500",
+      )}
+    >
+      {message}
     </div>
   );
 }
-export default CartItem;
+export default Alert;
 ```
 
-- `src/components/cart/CartSummary.jsx`
+- App.jsx
+
+```jsx
+import Alert from "./components/ui/Alert";
+
+function App() {
+  return (
+    <div>
+      <Alert type="success" message="hello" />
+      <Alert type="error" message="hello" />
+      <Alert type="warning" message="hello" />
+    </div>
+  );
+}
+export default App;
+```
+
+## @apply 추상화 css
+
+- index.css
+  : 반복해서 사용하는 클래스 모음
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply px-4 py-2 font-bold rounded;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+```
+
+```jsx
+function App() {
+  return (
+    <div>
+      <button className="btn btn-primary">Submit</button>
+      <button className="btn btn-secondary ">Cancel</button>
+    </div>
+  );
+}
+export default App;
+```
+
+## Tailwind 설정 확장
+
+```js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Vite 프로젝트에 맞는 파일 확장자 추가
+  ],
+  theme: {
+    extend: {
+      // 우리만의 서비스에 사용할 색상 추가
+      colors: {
+        brand: {
+          light: "#3B82F6",
+          DEFAULT: "#1E40AF",
+          dark: "#1E3A8A",
+        },
+      },
+      spacing: {
+        72: "18rem",
+        84: "21rem",
+        96: "24rem",
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+```jsx
+function App() {
+  return (
+    <div className="bg-brand text-brand-light p-72">
+      Custom Colors and Spacing
+    </div>
+  );
+}
+export default App;
+```
