@@ -1,21 +1,3 @@
-# Ant Design
-
-- 알리바바
-- UI CSS 수정이 엄청 어렵다.
-- 각 컴포넌트 사용법 학습에 시간이 오래 걸린다.
-- 틈나는 대로 하나씩 공부해 보자.
-- UI 코딩 및 CSS 작업 시간 간축 및 통일성 있는 UI 구성 가능.
-- https://ant.design/components/overview
-
-## 설치
-
-- `npm install antd --save`
-
-## 실습
-
-- /srtc/components/JoinForm.jsx
-
-```jsx
 import { Button, Form, Input } from "antd";
 
 const JoinForm = () => {
@@ -37,7 +19,7 @@ const JoinForm = () => {
 
   // 6. 각 필드의 입력 중인 값 알아내기
   const onChangeField = _field => {
-    console.log(_field);
+    console.log(_field[0].value);
   };
 
   // 7. 확인 버튼시 최종 입력값
@@ -96,11 +78,10 @@ const JoinForm = () => {
           <Input placeholder="이메일을 입력하세요." />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit"></Button>
+          <Button htmlType="submit">확인 눌러라</Button>
         </Form.Item>
       </Form>
     </div>
   );
 };
 export default JoinForm;
-```
