@@ -104,3 +104,64 @@ const JoinForm = () => {
 };
 export default JoinForm;
 ```
+
+## 실습 2(비밀번호 비교 예제)
+
+- `/src/App.jsx`
+
+```jsx
+import PwForm from "./components/PwForm";
+
+function App() {
+  return (
+    <div>
+      <PwForm />
+    </div>
+  );
+}
+export default App;
+```
+
+- `/src/component/PwForm.jsx 파일 생성`
+- 기본코드
+
+```jsx
+import { Button, Form, Input } from "antd";
+
+const PwForm = () => {
+  return (
+    <div>
+      <h1>비밀번호 검증예제</h1>
+      <Form>
+        <Form.Item
+          name={"password"}
+          label="비밀번호"
+          rules={[
+            { required: true, message: "비밀번호는 필수 항목입니다." },
+            {
+              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+              message:
+                "비밀번호는 최소 8자 이상이며, 대소문자와 숫자를 포함해야 합니다.",
+            },
+          ]}
+        >
+          <Input.Password placeholder="비밀번호를 입력해주세요." />
+        </Form.Item>
+        <Form.Item
+          name={"passwordConfirm"}
+          label="비밀번호 확인"
+          rules={[
+            { required: true, message: "비밀번호 확인은 필수 항목입니다." },
+          ]}
+        >
+          <Input.Password placeholder="비밀번호를 확인해주세요." />
+        </Form.Item>
+        <Form.Item>
+          <Button htmlType="submit">확인</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
+};
+export default PwForm;
+```
