@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Loading from "../components/loading/Loading.jsx";
-import companyRouter from "./companyrouter.js";
+import companyRouter from "./companyrouter.jsx";
 const LazyHome = lazy(() => import("../pages/index.jsx"));
 const LazyCompany = lazy(() => import("../pages/company.jsx"));
 const LazyGood = lazy(() => import("../pages/Good"));
