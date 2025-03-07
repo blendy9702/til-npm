@@ -1,96 +1,64 @@
-# Anime.js
+# Framer Motion
 
-[애니메이션 라이브러리 주소](https://animejs.com/)
-[NPM 주소](https://www.npmjs.com/package/animejs)
-[Anime.js 사용하기](https://velog.io/@bluestragglr/Anime.js-사용하기)
+- https://motion.dev/docs/react-quick-start
+- https://velog.io/@keumky1/Framer-Motion-입문하기
+- https://nykim.work/114
+- https://examples.motion.dev/react
 
-## 설치
+## 설치하기
 
 ```bash
-npm install animejs
+npm install framer-motion
 ```
 
-## 코드 적용
-
-- /src/pages/AniPage.jsx 생성
+- /src/pages/Framer.jsx
 
 ```jsx
-import anime from "animejs";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
-import { useEffect } from "react";
-import { useRef } from "react";
-
-const AniPage = () => {
-  const BoxWrap = {
-    position: "releative",
-    width: "100%",
-    height: "80vh",
-    backgroundColor: "yellowgreen",
-  };
-  const BoxStyle = {
-    position: "absolute",
-    left: 100,
-    top: 250,
-    width: 100,
-    height: 100,
-    backgroundColor: "red",
-  };
-
-  // 만약 html 이었으면 querySelector(".클래스명")
-  // React 이므로 useRef 로 html 태그를 참조한다.
-  const boxRef = useRef(null);
-  // 버튼 이벤트에서 anime 적용해보기
-  const motionA = () => {
-    anime({
-      targets: boxRef.current,
-      left: "240px",
-      backgroundColor: "#FFF",
-      borderRadius: ["0%", "50%"],
-      easing: "easeInOutQuad",
-    });
-  };
-  const motionB = () => {
-    anime({
-      targets: boxRef.current,
-      scale: 1.5,
-      duration: 2000,
-      backgroundColor: "#0F0",
-    });
-  };
-  const motionC = () => {
-    anime({
-      targets: boxRef.current,
-      scale: 1,
-      left: 0,
-      duration: 2000,
-      backgroundColor: "#F00",
-    });
-  };
-
-  // 실제 anime 적용해보기
-  useEffect(() => {
-    const box = boxRef.current;
-    // anime({
-    //   targets: box,
-    //   translateX: 150,
-    //   duration: 5000,
-    //   rotate: "1turn",
-    // });
-  }, []);
-
+const Framer = () => {
+  const [visible, setVisible] = useState(false);
+  const [move, setMove] = useState(false);
   return (
     <div>
-      <h1>AniPage</h1>
-      <div>
-        <button onClick={motionA}>효과 1</button>
-        <button onClick={motionB}>효과 2</button>
-        <button onClick={motionC}>효과 3</button>
-      </div>
-      <div style={BoxWrap}>
-        <div style={BoxStyle} ref={boxRef}></div>
-      </div>
+      <h1>Framer Motion 연습</h1>
+      <motion.button
+        onClick={() => setMove(!move)}
+        style={{
+          backgroundColor: "#4faffd",
+          color: "white",
+          padding: "10px 20px",
+          borderRadius: "8px",
+          border: "none",
+          cursor: "pointer",
+          marginTop: "20px",
+          fontSize: "16px",
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {move ? "숨기기" : "보이기"}
+      </motion.button>
+      <motion.div
+        initial={{ y: 0 }}
+        animate={{ y: move ? 100 : 0 }}
+        transition={{ duration: 0.4 }}
+        style={{
+          width: "100px",
+          height: "100px",
+          backgroundColor: "#4faffd",
+          borderRadius: 8,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        기머띠
+      </motion.div>
     </div>
   );
 };
-export default AniPage;
+
+export default Framer;
 ```
